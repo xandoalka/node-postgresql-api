@@ -22,6 +22,21 @@ const uploadImageToFirebase = (file) => {
   });
 };
 
+const deleteImageFromFirebase = (fileUrl) => {
+  return new Promise((resolve, reject) => {
+    const fileName = fileUrl.split('/').pop();
+    const file = bucket.file(fileName);
+
+    file.delete((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
+
 // Get all items
 exports.getAllItems = async (req, res) => {
   try {
@@ -71,8 +86,24 @@ exports.createItem = async (req, res) => {
 exports.patchItem = async (req, res) => {
   const { id } = req.params;
   try {
+    const item = await prisma.item.findUnique({
+      where: { id: parseInt(id) }
+    });
+
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
     const logoUrl = req.files.logo ? await uploadImageToFirebase(req.files.logo[0]) : null;
     const imageUrl = req.files.image ? await uploadImageToFirebase(req.files.image[0]) : null;
+
+    // Hapus foto lama jika ada foto baru yang di-upload
+    if (logoUrl && item.logo) {
+      await deleteImageFromFirebase(item.logo);
+    }
+    if (imageUrl && item.image) {
+      await deleteImageFromFirebase(item.image);
+    }
 
     const data = { ...req.body };
     if (logoUrl) data.logo = logoUrl;
@@ -93,6 +124,22 @@ exports.patchItem = async (req, res) => {
 exports.deleteItem = async (req, res) => {
   const { id } = req.params;
   try {
+    const item = await prisma.item.findUnique({
+      where: { id: parseInt(id) }
+    });
+
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    // Hapus foto dari Firebase Storage
+    if (item.logo) {
+      await deleteImageFromFirebase(item.logo);
+    }
+    if (item.image) {
+      await deleteImageFromFirebase(item.image);
+    }
+
     await prisma.item.delete({
       where: { id: parseInt(id) }
     });

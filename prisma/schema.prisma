@@ -10,10 +10,11 @@ generator client {
 model App {
   id          Int     @id @default(autoincrement())
   title       String
-  description String
+  description String?
   developer   String
   logo        String?
   image       String?
   cost        String?
   download    String?
+  subscribe   String?
 }

@@ -7,6 +7,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Subscribe {
+  NO
+  YES
+}
+
 model App {
   id          Int     @id @default(autoincrement())
   title       String
@@ -16,5 +21,5 @@ model App {
   image       String?
   cost        String?
   download    String?
-  subscribe   String?
+  subscribe   Subscribe @default(NO)
 }

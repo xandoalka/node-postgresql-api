@@ -43,7 +43,13 @@ const deleteImageFromFirebase = (fileUrl) => {
 // Get all items
 exports.getAllItems = async (req, res) => {
    try {
-      const apps = await prisma.app.findMany();
+      const apps = await prisma.app.findMany(
+         {
+            orderBy: {
+               id: 'asc'
+            }
+         }
+      );
       res.status(200).json(apps);
    } catch (err) {
       console.error(err);

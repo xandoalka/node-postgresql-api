@@ -9,7 +9,7 @@ app.use(cors({ origin: "*" })); // Use cors middleware
 
 const appRouter = require('./routes/app.routes');
 const dataProjectRouter = require('./routes/dataProject.routes');
-app.use("/item", appRouter);
+app.use("/", appRouter);
 app.use("/project", dataProjectRouter);
 
 const PORT = process.env.PORT || 5000;

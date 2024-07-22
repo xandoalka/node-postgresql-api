@@ -23,3 +23,19 @@ model App {
   download    String?
   subscribe   Subscribe @default(NO)
 }
+
+enum Type {
+   website
+   app
+   fun
+}
+
+model dataProject {
+   id          Int      @id @default(autoincrement())
+   type        Type     @default(website)
+   image       String
+   title       String
+   description String
+   url         String
+   target      String
+}
